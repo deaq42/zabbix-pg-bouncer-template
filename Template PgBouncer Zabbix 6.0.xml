@@ -1,0 +1,1934 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<zabbix_export>
+    <version>6.0</version>
+    <date>2026-11-18T11:28:28Z</date>
+    <groups>
+        <group>
+            <uuid>582b59e6861e424ba215b92e9c5ac8c9</uuid>
+            <name>Templates/PgBouncer</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <uuid>eaf5871e798343adb189a331e5d0e421</uuid>
+            <template>Template PgBouncer by agent 6.0</template>
+            <name>Template PgBouncer by agent 6.0</name>
+            <description>PgBouncer monitoring for Zabbix 6.0. Requires the matching monitor/pgbouncer.sh and psql &gt;=12. CSV headers are parsed by name, so column reordering is supported. Tested on PgBouncer 1.26.1. Based on Lelik13a/Zabbix-PgBouncer commit 6982b081f004f27d2b8cb4c1dec0b305225a86c1.</description>
+            <groups>
+                <group>
+                    <name>Templates/PgBouncer</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>7eacfeb0a70e482ea7fc1731c99b2c4d</uuid>
+                    <name>PgBouncer databases raw</name>
+                    <key>pgbouncer.databases</key>
+                    <delay>30s</delay>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>value = value.replace(/[\r\n]+$/, "");var header = value.split(/\r?\n/, 1)[0].split(",");var required = ["name"];for (var i=0; i&lt;required.length; i++) {if (header.indexOf(required[i]) &lt; 0) throw "Missing CSV column: " + required[i]; } return value;</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>"</parameter>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>69f5e3ad65d642208e563519af1c8655</uuid>
+                    <name>Total free client connections</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.lists[free_clients]</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Count of free clients. These are clients that are disconnected, but PgBouncer keeps the memory around that was allocated for them so it can be reused for a future clients to avoid allocations.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.list == "free_clients")].items.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.lists</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>b4be84d94b4d4daeab84202c1c92f3e4</uuid>
+                    <name>Total free server connections</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.lists[free_servers]</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Count of free servers. These are servers that are disconnected, but PgBouncer keeps the memory around that was allocated for them so it can be reused for a future servers to avoid allocations.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.list == "free_servers")].items.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.lists</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>83856546432741b5beab63122ebf3baa</uuid>
+                    <name>Total login client connections</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.lists[login_clients]</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Count of clients in login state.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.list == "login_clients")].items.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.lists</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>b1ae4a0f59a0480f9cd4f3ec675175e9</uuid>
+                    <name>Total pools</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.lists[pools]</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Count of pools.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.list == "pools")].items.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.lists</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f39154a434124627ba5d966c32899811</uuid>
+                    <name>Total used client connections</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.lists[used_clients]</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Count of used clients.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.list == "used_clients")].items.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.lists</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>b018b1e77e184258bd7d25c6ca7196e0</uuid>
+                    <name>Total used server connections</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.lists[used_servers]</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Count of used servers.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.list == "used_servers")].items.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.lists</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>332573520baf487cb080751a97e3134b</uuid>
+                    <name>Total users</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.lists[users]</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Count of users.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.list == "users")].items.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.lists</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>5938dec8669942cd860b12d6643a489d</uuid>
+                    <name>PgBouncer lists raw</name>
+                    <key>pgbouncer.pool.lists</key>
+                    <delay>30s</delay>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>value = value.replace(/[\r\n]+$/, "");var header = value.split(/\r?\n/, 1)[0].split(",");var required = ["list", "items"];for (var i=0; i&lt;required.length; i++) {if (header.indexOf(required[i]) &lt; 0) throw "Missing CSV column: " + required[i]; } return value;</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>"</parameter>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>03334f241c6d4fa29e91c4caac986e83</uuid>
+                    <name>PgBouncer pools raw</name>
+                    <key>pgbouncer.pool.pools</key>
+                    <delay>30s</delay>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>value = value.replace(/[\r\n]+$/, "");var header = value.split(/\r?\n/, 1)[0].split(",");var required = ["database", "user"];for (var i=0; i&lt;required.length; i++) {if (header.indexOf(required[i]) &lt; 0) throw "Missing CSV column: " + required[i]; } return value;</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>"</parameter>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>9ad75102061e4ceeb7c0e451cf2fbdd3</uuid>
+                    <name>PgBouncer stats raw</name>
+                    <key>pgbouncer.pool.stats</key>
+                    <delay>30s</delay>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>value = value.replace(/[\r\n]+$/, "");var header = value.split(/\r?\n/, 1)[0].split(",");var required = ["database"];for (var i=0; i&lt;required.length; i++) {if (header.indexOf(required[i]) &lt; 0) throw "Missing CSV column: " + required[i]; } return value;</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>"</parameter>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>e741f342a2a04636843cb5b856f84f6e</uuid>
+                    <name>PgBouncer totals raw</name>
+                    <key>pgbouncer.pool.totals</key>
+                    <delay>30s</delay>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>value = value.replace(/[\r\n]+$/, "");var header = value.split(/\r?\n/, 1)[0].split(",");var required = ["name", "value"];for (var i=0; i&lt;required.length; i++) {if (header.indexOf(required[i]) &lt; 0) throw "Missing CSV column: " + required[i]; } return value;</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>"</parameter>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>3089f1052dc4415e8f649e9766c16b04</uuid>
+                    <name>PgBouncer state</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.state</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>var rows=JSON.parse(value), flags={};for(var i=0;i&lt;rows.length;i++) flags[rows[i].key]=rows[i].value;if(flags.suspended==="yes") return "suspended";if(flags.paused==="yes") return "paused";return flags.active==="yes" ? "active" : "inactive";</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.state.raw</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>f804d7425878431a9335c68bfceaa24e</uuid>
+                            <expression>change(/Template PgBouncer by agent 6.0/pgbouncer.state)&lt;&gt;0</expression>
+                            <name>Pgbouncer state changed</name>
+                            <priority>WARNING</priority>
+                            <description>Pgbouncer changed state</description>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                        <trigger>
+                            <uuid>ac7cfdc7bcc840e9aa1e8242e7294a14</uuid>
+                            <expression>nodata(/Template PgBouncer by agent 6.0/pgbouncer.state,5m)=1</expression>
+                            <name>Pgbouncer state no data</name>
+                            <priority>WARNING</priority>
+                            <description>No data from PgBouncer monitoring</description>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                        <trigger>
+                            <uuid>f8c2a96454824312bc599ef92d1fe915</uuid>
+                            <expression>last(/Template PgBouncer by agent 6.0/pgbouncer.state)&lt;&gt;"active"</expression>
+                            <name>Pgbouncer state not active</name>
+                            <priority>AVERAGE</priority>
+                            <description>Pgbouncer state not active</description>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>bfb9d10c697b40a5887eb672a7aaf0e6</uuid>
+                    <name>PgBouncer state raw</name>
+                    <key>pgbouncer.state.raw</key>
+                    <delay>30s</delay>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>value = value.replace(/[\r\n]+$/, "");var header = value.split(/\r?\n/, 1)[0].split(",");var required = ["key", "value"];for (var i=0; i&lt;required.length; i++) {if (header.indexOf(required[i]) &lt; 0) throw "Missing CSV column: " + required[i]; } return value;</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>"</parameter>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <uuid>8694699af8ef4a34b049bc9ce035297c</uuid>
+                    <name>Average number of SQL queries among all databases</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.avg_query_count</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "avg_query_count")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>8759b62b2fa145f1a1dd26f4bb1a9821</uuid>
+                    <name>Average query duration duration among all databases</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.avg_query_time</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>Average query duration</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "avg_query_time")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <parameters>
+                                <parameter>0.000001</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f09f225dee75474cb673de4cb1bd07bb</uuid>
+                    <name>Time spent by clients waiting for a server among all databases</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.avg_wait_time</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>Time spent by clients waiting for a server, in seconds (average of the wait times for clients assigned a backend during the current stats_period).</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "avg_wait_time")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <parameters>
+                                <parameter>0.000001</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>4718c89999724557baae2058814819ca</uuid>
+                            <expression>last(/Template PgBouncer by agent 6.0/pgbouncer.total.avg_wait_time)&gt;{$PGBOUNCER.WAIT.TIME}</expression>
+                            <name>Time spent by clients waiting for a server more then {$PGBOUNCER.WAIT.TIME}</name>
+                            <opdata>avg_wait_time: {$PGBOUNCER.WAIT.TIME}</opdata>
+                            <priority>WARNING</priority>
+                            <description>Time spent by clients waiting for a server, in seconds (average of the wait times for clients assigned a backend during the current stats_period) more then {$PGBOUNCER.WAIT.TIME}</description>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>cf08fd89eeef420ab6ff591d491e3b60</uuid>
+                    <name>Average number of SQL transactions among all databases</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.avg_xact_count</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "avg_xact_count")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>c4f44238856a4466aee826d546c36ed8</uuid>
+                    <name>Average transaction duration among all databases</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.avg_xact_time</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>Average transaction duration</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "avg_xact_time")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <parameters>
+                                <parameter>0.000001</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>c69aa86c7b6c4781b26a43ba5f2097ea</uuid>
+                    <name>Total received data from clients among all databases</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.total_client_bytes</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>Bps</units>
+                    <description>Total received data from clients among all databases</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "total_client_bytes")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <parameters>
+                                <parameter />
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>b5bf262831ef47da878b66658630f2db</uuid>
+                    <name>Number of SQL queries among all databases per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.total_query_count</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>queries/s</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "total_query_count")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <parameters>
+                                <parameter />
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1f468c4a56284af592b92913af5b5bc8</uuid>
+                    <name>Total sent data to clients among all databases</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.total_server_bytes</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>Bps</units>
+                    <description>Total sent data to clients among all databases</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "total_server_bytes")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <parameters>
+                                <parameter />
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>759d86ac9ed54aa09c460eb14314d3a2</uuid>
+                    <name>Number of SQL transactions among all databases per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.total.total_xact_count</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>transactions/s</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name == "total_xact_count")].value.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <parameters>
+                                <parameter />
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>pgbouncer.pool.totals</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>PgBouncer</value>
+                        </tag>
+                    </tags>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <uuid>b21c173d01b342fe82a2301cc6752d5a</uuid>
+                    <name>PgBouncer databases discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.database.discover</key>
+                    <delay>0</delay>
+                    <lifetime>7d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>736c9fcdb9ac4ddc827c3457e83ca4ba</uuid>
+                            <name>Current client connections for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.databases.current_client_connections[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Current number of client connections for this database.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.name == "{#PGBOUNCER_DATABASE}")].current_client_connections.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.databases</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>514b4bb82995409f90658048ace54fa7</uuid>
+                            <name>Current connections for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.databases.current_connections[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Current number of server connections for this database.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.name == "{#PGBOUNCER_DATABASE}")].current_connections.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.databases</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>f6b593e1aeef45e88706a1d7d13fc4a7</uuid>
+                            <name>Maximum client connections for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.databases.max_client_connections[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Maximum number of allowed server connections for this database, as set by max_db_connections, either globally or per database.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.name == "{#PGBOUNCER_DATABASE}")].max_client_connections.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.databases</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>4b04b6d589e04439a65f4147585f61e4</uuid>
+                            <name>Maximum connections for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.databases.max_connections[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Maximum number of allowed server connections for this database, as set by max_db_connections, either globally or per database.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.name == "{#PGBOUNCER_DATABASE}")].max_connections.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.databases</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>3c6b030c29f94cad9d98e332c8f2acc1</uuid>
+                            <name>Pool size for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.databases.pool_size[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Maximum number of server connections.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.name == "{#PGBOUNCER_DATABASE}")].pool_size.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.databases</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>00e545f8b3c8404c865d582837f25d3d</uuid>
+                            <name>Average query duration for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.stats.avg_query_time[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Average query duration, in seconds.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}")].avg_query_time.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>0.000001</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>e7bbb1b2ce6e41148da47d48ba12d1f2</uuid>
+                            <name>Average wait time for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.stats.avg_wait_time[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Time spent by clients waiting for a server, in seconds (average of the wait times for clients assigned a backend during the current stats_period).</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}")].avg_wait_time.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>0.000001</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>7418a21b620140689c497e79d06c2d73</uuid>
+                                    <expression>last(/Template PgBouncer by agent 6.0/pgbouncer.stats.avg_wait_time[{#PGBOUNCER_DATABASE}])&gt;{$PGBOUNCER.WAIT.TIME:"{#PGBOUNCER_DATABASE}"}</expression>
+                                    <name>PgBouncer {#PGBOUNCER_DATABASE} wait time over {$PGBOUNCER.WAIT.TIME:"{#PGBOUNCER_DATABASE}"}</name>
+                                    <opdata>awg wait time: {ITEM.LASTVALUE1}</opdata>
+                                    <priority>AVERAGE</priority>
+                                    <description>Time spent by clients waiting for a server, in seconds (average per second).</description>
+                                    <tags>
+                                        <tag>
+                                            <tag>Application</tag>
+                                            <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                        </tag>
+                                    </tags>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>0ba830aaa53d4e33beba48df9913e4ea</uuid>
+                            <name>Average transaction duration for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.stats.avg_xact_time[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Average transaction duration, in seconds.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}")].avg_xact_time.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>0.000001</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>46de4b86f12f40c6813a4daf608f4d9e</uuid>
+                            <name>Number of SQL queries/s for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.stats.total_query_count[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>queries/s</units>
+                            <description>Total number of SQL commands pooled by pgbouncer.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}")].total_query_count.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <parameters>
+                                        <parameter />
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>91b189f8c8f4477ea19763ab29f195b3</uuid>
+                            <name>Received data for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.stats.total_received[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <description>Network traffic received by pgbouncer in bytes.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}")].total_received.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <parameters>
+                                        <parameter />
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>1428177c0c7f44678f82df5f3dc64bb7</uuid>
+                            <name>Sent data for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.stats.total_sent[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <description>Network traffic sent by pgbouncer in bytes.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}")].total_sent.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <parameters>
+                                        <parameter />
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>ac6e2a44559d4a3f8c0e9c028d878494</uuid>
+                            <name>Number of SQL transactions/s for DB {#PGBOUNCER_DATABASE}</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.stats.total_xact_count[{#PGBOUNCER_DATABASE}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>transactions/s</units>
+                            <description>Total number of SQL transactions pooled by pgbouncer.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}")].total_xact_count.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <parameters>
+                                        <parameter />
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <uuid>478b8aed66664942a3787a89640c3a98</uuid>
+                            <expression>last(/Template PgBouncer by agent 6.0/pgbouncer.databases.max_client_connections[{#PGBOUNCER_DATABASE}])&gt;0 and last(/Template PgBouncer by agent 6.0/pgbouncer.databases.current_client_connections[{#PGBOUNCER_DATABASE}])&gt;={$PGBOUNCER.CL.CONN.WARN:"{#PGBOUNCER_DATABASE}"}/100*last(/Template PgBouncer by agent 6.0/pgbouncer.databases.max_client_connections[{#PGBOUNCER_DATABASE}])</expression>
+                            <name>Client connections for DB {#PGBOUNCER_DATABASE} over {$PGBOUNCER.CL.CONN.WARN:"{#PGBOUNCER_DATABASE}"}% used</name>
+                            <opdata>Clients: {ITEM.LASTVALUE2} (max: {ITEM.LASTVALUE1})</opdata>
+                            <priority>WARNING</priority>
+                            <description>pool_size
+    Maximum number of server connections.
+current_client_connections
+    Current number of client connections for this database.</description>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <uuid>708bb980a31e427c9691ef5a4b403aa4</uuid>
+                            <expression>last(/Template PgBouncer by agent 6.0/pgbouncer.databases.max_connections[{#PGBOUNCER_DATABASE}])&gt;0 and last(/Template PgBouncer by agent 6.0/pgbouncer.databases.current_connections[{#PGBOUNCER_DATABASE}])&gt;={$PGBOUNCER.DB.CONN.WARN:"{#PGBOUNCER_DATABASE}"}/100*last(/Template PgBouncer by agent 6.0/pgbouncer.databases.max_connections[{#PGBOUNCER_DATABASE}])</expression>
+                            <name>Connections to DB {#PGBOUNCER_DATABASE} over {$PGBOUNCER.DB.CONN.WARN:"{#PGBOUNCER_DATABASE}"}% used</name>
+                            <opdata>Used connections: {ITEM.LASTVALUE2} (max:  {ITEM.LASTVALUE1})</opdata>
+                            <priority>WARNING</priority>
+                            <description>max_connections
+    Maximum number of allowed server connections for this database, as set by max_db_connections, either globally or per database.
+current_connections
+    Current number of server connections for this database.</description>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <uuid>53871722b3d541319043e6b8a3cad6a4</uuid>
+                            <name>PgBouncer: Network traffic {#PGBOUNCER_DATABASE}</name>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.stats.total_received[{#PGBOUNCER_DATABASE}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>0040FF</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.stats.total_sent[{#PGBOUNCER_DATABASE}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <uuid>a51705feb8c24a36a56dbbafe6a5f589</uuid>
+                            <name>PgBouncer database {#PGBOUNCER_DATABASE} connections</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <calc_fnc>ALL</calc_fnc>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.databases.current_connections[{#PGBOUNCER_DATABASE}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>FFEB3B</color>
+                                    <calc_fnc>ALL</calc_fnc>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.databases.current_client_connections[{#PGBOUNCER_DATABASE}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>F57F17</color>
+                                    <calc_fnc>ALL</calc_fnc>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.databases.max_connections[{#PGBOUNCER_DATABASE}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>C62828</color>
+                                    <calc_fnc>ALL</calc_fnc>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.databases.pool_size[{#PGBOUNCER_DATABASE}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                    <master_item>
+                        <key>pgbouncer.pool.stats</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PGBOUNCER_DATABASE}</lld_macro>
+                            <path>$.database</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+                <discovery_rule>
+                    <uuid>b0c5a00979be4333bcf7f2b72cf680f6</uuid>
+                    <name>PgBouncer pools discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>pgbouncer.pool.discover</key>
+                    <delay>0</delay>
+                    <lifetime>7d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>f990905636094ff48604cbfe1a9aa588</uuid>
+                            <name>PgBouncer {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: client maxwait</name>
+                            <type>CALCULATED</type>
+                            <key>pgbouncer.pools.client.maxwait[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <params>last(//pgbouncer.pools.maxwait[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]) + last(//pgbouncer.pools.maxwait_us[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}])</params>
+                            <description>How long the first (oldest) client in the queue has waited, in seconds. If this starts increasing, then the current pool of servers does not handle requests quickly enough. The reason may be either an overloaded server or just too small of a pool_size setting.</description>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>ebe9529757ea43559b1a390806c739cc</uuid>
+                                    <expression>last(/Template PgBouncer by agent 6.0/pgbouncer.pools.client.maxwait[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]) &gt; {$PGBOUNCER.POOLS.MAXWAIT.TIME:"{#PGBOUNCER_DATABASE}"}</expression>
+                                    <name>PgBouncer {#PGBOUNCER_DATABASE} client max wait time over {$PGBOUNCER.POOLS.MAXWAIT.TIME:"{#PGBOUNCER_DATABASE}"}</name>
+                                    <opdata>wait time: {ITEM.LASTVALUE1}</opdata>
+                                    <priority>AVERAGE</priority>
+                                    <description>How long the first (oldest) client in the queue has waited, in seconds. If this starts increasing, then the current pool of servers does not handle requests quickly enough. The reason may be either an overloaded server or just too small of a pool_size setting.</description>
+                                    <tags>
+                                        <tag>
+                                            <tag>Application</tag>
+                                            <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                        </tag>
+                                    </tags>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>550be02d87ab439e90a7c4e8e4f42d92</uuid>
+                            <name>PgBouncer client {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: active connections</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.cl_active[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Client connections that are either linked to server connections or are idle with no queries waiting to be processed.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].cl_active.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>a70db5bfeab44376bedb41a44423e86c</uuid>
+                            <name>PgBouncer client {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: active waiting</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.cl_waiting[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Client connections that have sent queries but have not yet got a server connection.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].cl_waiting.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>10c2e5935fbf42aaaef8a7f637b0b98c</uuid>
+                            <name>PgBouncer client {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: maxwait</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.maxwait[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>How long the first (oldest) client in the queue has waited, in seconds. If this starts increasing, then the current pool of servers does not handle requests quickly enough. The reason may be either an overloaded server or just too small of a pool_size setting.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].maxwait.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>7661f77d89534218905ac6d35391e735</uuid>
+                            <name>PgBouncer client {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: maxwait micro seconds</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.maxwait_us[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>How long the first (oldest) client in the queue has waited, in seconds. If this starts increasing, then the current pool of servers does not handle requests quickly enough. The reason may be either an overloaded server or just too small of a pool_size setting.
+Microsecond part of the maximum waiting time.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].maxwait_us.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>0.000001</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>270d64a8ef714f1494b857e1a5015c5a</uuid>
+                            <name>PgBouncer client {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: pool mode</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.pool_mode[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <description>The pooling mode in use</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].pool_mode.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>9c962990a7984097ab7661740036cb6b</uuid>
+                            <name>PgBouncer server {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: active connections</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.sv_active[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Server connections that are linked to a client.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].sv_active.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>909623845377485090291d84c6ce9d62</uuid>
+                            <name>PgBouncer server {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: unused connections</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.sv_idle[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Server connections that are unused and immediately usable for client queries.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].sv_idle.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>5fae0af1cec049a78bfe525920ed22a4</uuid>
+                            <name>PgBouncer server {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: logging connections</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.sv_login[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Server connections currently in the process of logging in.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].sv_login.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>b7c29a81193c4937b016f818cc65ea91</uuid>
+                            <name>PgBouncer server {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: tested connections</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.sv_tested[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Server connections that are currently running either server_reset_query or server_check_query.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].sv_tested.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>1e6344e141334855bda8a498a8001050</uuid>
+                            <name>PgBouncer server {#PGBOUNCER_USER}@{#PGBOUNCER_DATABASE}: used connections</name>
+                            <type>DEPENDENT</type>
+                            <key>pgbouncer.pools.sv_used[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Server connections that have been idle for more than server_check_delay, so they need server_check_query to run on them before they can be used again.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.database == "{#PGBOUNCER_DATABASE}" &amp;&amp; @.user == "{#PGBOUNCER_USER}")].sv_used.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>pgbouncer.pool.pools</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>PgBouncer: {#PGBOUNCER_DATABASE}</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <uuid>079d1e0a12d940e585c8556531714a65</uuid>
+                            <name>PgBouncer client {#PGBOUNCER_DATABASE}@{#PGBOUNCER_USER}: connections</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.pools.cl_active[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.pools.cl_waiting[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <uuid>798e4e9de8a4468785d9a2c541763d43</uuid>
+                            <name>PgBouncer server {#PGBOUNCER_DATABASE}@{#PGBOUNCER_USER}: connections</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.pools.sv_active[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.pools.sv_login[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.pools.sv_tested[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>F7941D</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.pools.sv_idle[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>4</sortorder>
+                                    <color>FC6EA3</color>
+                                    <item>
+                                        <host>Template PgBouncer by agent 6.0</host>
+                                        <key>pgbouncer.pools.sv_used[{#PGBOUNCER_DATABASE},{#PGBOUNCER_USER}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                    <master_item>
+                        <key>pgbouncer.pool.pools</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PGBOUNCER_DATABASE}</lld_macro>
+                            <path>$.database</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#PGBOUNCER_USER}</lld_macro>
+                            <path>$.user</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$PGBOUNCER.CL.CONN.WARN}</macro>
+                    <value>90</value>
+                    <description>Percent for used client connections per database</description>
+                </macro>
+                <macro>
+                    <macro>{$PGBOUNCER.DB.CONN.WARN}</macro>
+                    <value>90</value>
+                    <description>Percent for used connections per database</description>
+                </macro>
+                <macro>
+                    <macro>{$PGBOUNCER.POOLS.MAXWAIT.TIME}</macro>
+                    <value>0.1</value>
+                    <description>How long the first (oldest) client in the queue has waited, in seconds.</description>
+                </macro>
+                <macro>
+                    <macro>{$PGBOUNCER.WAIT.TIME}</macro>
+                    <value>0.1</value>
+                    <description>Time spent by clients waiting for a server, in seconds onds.</description>
+                </macro>
+            </macros>
+            <dashboards>
+                <dashboard>
+                    <uuid>2d51bfd39461495c854b27f6e9757201</uuid>
+                    <name>PgBouncer overview</name>
+                    <pages>
+                        <page>
+                            <widgets>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template PgBouncer by agent 6.0</host>
+                                                <name>PgBouncer: connections</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <y>5</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template PgBouncer by agent 6.0</host>
+                                                <name>PgBouncer: Total data flow among all databases</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_PROTOTYPE</type>
+                                    <y>10</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>columns</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>GRAPH_PROTOTYPE</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template PgBouncer by agent 6.0</host>
+                                                <name>PgBouncer client {#PGBOUNCER_DATABASE}@{#PGBOUNCER_USER}: connections</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <y>15</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>ITEM</type>
+                                            <name>itemid</name>
+                                            <value>
+                                                <host>Template PgBouncer by agent 6.0</host>
+                                                <key>pgbouncer.total.avg_query_count</key>
+                                            </value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>source_type</name>
+                                            <value>1</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_PROTOTYPE</type>
+                                    <name>PgBouncer connections per database</name>
+                                    <x>12</x>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>columns</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>GRAPH_PROTOTYPE</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template PgBouncer by agent 6.0</host>
+                                                <name>PgBouncer database {#PGBOUNCER_DATABASE} connections</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_PROTOTYPE</type>
+                                    <x>12</x>
+                                    <y>10</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>columns</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>GRAPH_PROTOTYPE</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <host>Template PgBouncer by agent 6.0</host>
+                                                <name>PgBouncer server {#PGBOUNCER_DATABASE}@{#PGBOUNCER_USER}: connections</name>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <x>12</x>
+                                    <y>15</y>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>ITEM</type>
+                                            <name>itemid</name>
+                                            <value>
+                                                <host>Template PgBouncer by agent 6.0</host>
+                                                <key>pgbouncer.total.avg_query_time</key>
+                                            </value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>source_type</name>
+                                            <value>1</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                            </widgets>
+                        </page>
+                    </pages>
+                </dashboard>
+            </dashboards>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <uuid>9729ad1ac07b460bbfc54395fbbe5120</uuid>
+            <name>PgBouncer: connections</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template PgBouncer by agent 6.0</host>
+                        <key>pgbouncer.lists[free_clients]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template PgBouncer by agent 6.0</host>
+                        <key>pgbouncer.lists[free_servers]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template PgBouncer by agent 6.0</host>
+                        <key>pgbouncer.lists[login_clients]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>F7941D</color>
+                    <item>
+                        <host>Template PgBouncer by agent 6.0</host>
+                        <key>pgbouncer.lists[used_clients]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>FC6EA3</color>
+                    <item>
+                        <host>Template PgBouncer by agent 6.0</host>
+                        <key>pgbouncer.lists[used_servers]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>da3d4b00204749959735ab038451d37b</uuid>
+            <name>PgBouncer: Total data flow among all databases</name>
+            <graph_items>
+                <graph_item>
+                    <drawtype>FILLED_REGION</drawtype>
+                    <color>00FF00</color>
+                    <item>
+                        <host>Template PgBouncer by agent 6.0</host>
+                        <key>pgbouncer.total.total_client_bytes</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>FILLED_REGION</drawtype>
+                    <color>0040FF</color>
+                    <item>
+                        <host>Template PgBouncer by agent 6.0</host>
+                        <key>pgbouncer.total.total_server_bytes</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>
