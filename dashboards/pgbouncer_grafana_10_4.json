@@ -1,0 +1,5218 @@
+{
+  "id": null,
+  "uid": "pgbouncer-zabbix-104",
+  "title": "PgBouncer · Zabbix",
+  "description": "Метрики исправленного Template PgBouncer by agent 6.0. Grafana 10.4 / Grafana-Zabbix 4.6.1.",
+  "tags": [
+    "PgBouncer",
+    "PostgreSQL",
+    "Zabbix"
+  ],
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "style": "dark",
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "30s",
+      "1m",
+      "5m",
+      "15m"
+    ]
+  },
+  "graphTooltip": 1,
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "DS_ZABBIX",
+        "label": "Источник Zabbix",
+        "type": "datasource",
+        "query": "alexanderzobnin-zabbix-datasource",
+        "refresh": 1,
+        "hide": 0,
+        "regex": "",
+        "options": []
+      },
+      {
+        "name": "group",
+        "label": "Группа",
+        "type": "query",
+        "datasource": {
+          "type": "alexanderzobnin-zabbix-datasource",
+          "uid": "${DS_ZABBIX}"
+        },
+        "query": {
+          "queryType": "group",
+          "application": "",
+          "itemTag": "",
+          "group": "/.*/",
+          "host": "",
+          "item": ""
+        },
+        "definition": "Zabbix group",
+        "refresh": 1,
+        "sort": 1,
+        "hide": 0,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "regex": "",
+        "options": [],
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "host",
+        "label": "Хост",
+        "type": "query",
+        "datasource": {
+          "type": "alexanderzobnin-zabbix-datasource",
+          "uid": "${DS_ZABBIX}"
+        },
+        "query": {
+          "queryType": "host",
+          "application": "",
+          "itemTag": "",
+          "group": "$group",
+          "host": "/.*/",
+          "item": ""
+        },
+        "definition": "Zabbix host",
+        "refresh": 1,
+        "sort": 1,
+        "hide": 0,
+        "multi": false,
+        "includeAll": false,
+        "allValue": null,
+        "regex": "",
+        "options": []
+      },
+      {
+        "name": "database",
+        "label": "База",
+        "type": "query",
+        "datasource": {
+          "type": "alexanderzobnin-zabbix-datasource",
+          "uid": "${DS_ZABBIX}"
+        },
+        "query": {
+          "queryType": "item",
+          "application": "",
+          "itemTag": "",
+          "group": "$group",
+          "host": "$host",
+          "item": "/^Average query duration for DB .+$/"
+        },
+        "definition": "Zabbix item",
+        "refresh": 1,
+        "sort": 1,
+        "hide": 0,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "regex": "/^Average query duration for DB (.+)$/",
+        "options": [],
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "pool",
+        "label": "Пул · пользователь@база",
+        "type": "query",
+        "datasource": {
+          "type": "alexanderzobnin-zabbix-datasource",
+          "uid": "${DS_ZABBIX}"
+        },
+        "query": {
+          "queryType": "item",
+          "application": "",
+          "itemTag": "",
+          "group": "$group",
+          "host": "$host",
+          "item": "/^PgBouncer client .+@${database:regex}: active connections$/"
+        },
+        "definition": "Zabbix item",
+        "refresh": 1,
+        "sort": 1,
+        "hide": 0,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "regex": "/^PgBouncer client (.+): active connections$/",
+        "options": [],
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "id": 1,
+      "title": "PgBouncer · экземпляр",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Последнее состояние",
+      "description": "Последнее значение в выбранном интервале. Общая метрика экземпляра; фильтры базы и пула не применяются.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "Нет данных",
+                  "color": "gray"
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "active": {
+                  "text": "ACTIVE",
+                  "color": "green"
+                },
+                "paused": {
+                  "text": "PAUSED",
+                  "color": "orange"
+                },
+                "suspended": {
+                  "text": "SUSPENDED",
+                  "color": "red"
+                },
+                "inactive": {
+                  "text": "INACTIVE",
+                  "color": "red"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "2",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ state$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Состояние"
+              ],
+              "text": "setAlias(Состояние)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^(?!Time$).+/",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Запросы / с · все базы",
+      "description": "Последнее значение в выбранном интервале. Общая метрика экземпляра; фильтры базы и пула не применяются.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "Нет данных",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Number\\ of\\ SQL\\ queries\\ among\\ all\\ databases\\ per\\ sec$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Запросы/с"
+              ],
+              "text": "setAlias(Запросы/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Транзакции / с · все базы",
+      "description": "Последнее значение в выбранном интервале. Общая метрика экземпляра; фильтры базы и пула не применяются.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "Нет данных",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Number\\ of\\ SQL\\ transactions\\ among\\ all\\ databases\\ per\\ sec$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Транзакции/с"
+              ],
+              "text": "setAlias(Транзакции/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Пулы · экземпляр",
+      "description": "Последнее значение в выбранном интервале. Общая метрика экземпляра; фильтры базы и пула не применяются.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "Нет данных",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ pools$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Пулы"
+              ],
+              "text": "setAlias(Пулы)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Пользователи · экземпляр",
+      "description": "Последнее значение в выбранном интервале. Общая метрика экземпляра; фильтры базы и пула не применяются.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "Нет данных",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ users$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Пользователи"
+              ],
+              "text": "setAlias(Пользователи)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "Среднее ожидание · все базы",
+      "description": "Последнее значение в выбранном интервале. Общая метрика экземпляра; фильтры базы и пула не применяются.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "Нет данных",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.1
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Time\\ spent\\ by\\ clients\\ waiting\\ for\\ a\\ server\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Ожидание"
+              ],
+              "text": "setAlias(Ожидание)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "row",
+      "id": 8,
+      "title": "Общая нагрузка · все базы выбранного хоста",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 1
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Запросы и транзакции · все базы",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Number\\ of\\ SQL\\ queries\\ among\\ all\\ databases\\ per\\ sec$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Запросы/с"
+              ],
+              "text": "setAlias(Запросы/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Number\\ of\\ SQL\\ transactions\\ among\\ all\\ databases\\ per\\ sec$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Транзакции/с"
+              ],
+              "text": "setAlias(Транзакции/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Длительность · все базы",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 6,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Average\\ query\\ duration\\ duration\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Запрос"
+              ],
+              "text": "setAlias(Запрос)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Average\\ transaction\\ duration\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Транзакция"
+              ],
+              "text": "setAlias(Транзакция)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Time\\ spent\\ by\\ clients\\ waiting\\ for\\ a\\ server\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Ожидание"
+              ],
+              "text": "setAlias(Ожидание)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Трафик · все базы",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ received\\ data\\ from\\ clients\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "От клиентов"
+              ],
+              "text": "setAlias(От клиентов)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ sent\\ data\\ to\\ clients\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Клиентам"
+              ],
+              "text": "setAlias(Клиентам)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "Средние скорости PgBouncer · все базы",
+      "description": "Средние скорости, рассчитанные самим PgBouncer за stats_period; могут отличаться от скорости накопительных счётчиков Zabbix.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 14,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Average\\ number\\ of\\ SQL\\ queries\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Запросы/с"
+              ],
+              "text": "setAlias(Запросы/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Average\\ number\\ of\\ SQL\\ transactions\\ among\\ all\\ databases$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Транзакции/с"
+              ],
+              "text": "setAlias(Транзакции/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "row",
+      "id": 13,
+      "title": "Базы данных · фильтр «База»",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 24,
+        "h": 1
+      }
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Запросы и транзакции · по базам",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Number\\ of\\ SQL\\ queries\\/s\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Number\\ of\\ SQL\\ queries\\/s\\ for\\ DB\\ (.*)$/",
+                "$1 · запросы/с"
+              ],
+              "text": "replaceAlias(/^Number\\ of\\ SQL\\ queries\\/s\\ for\\ DB\\ (.*)$/, $1 · запросы/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Number\\ of\\ SQL\\ transactions\\/s\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Number\\ of\\ SQL\\ transactions\\/s\\ for\\ DB\\ (.*)$/",
+                "$1 · транзакции/с"
+              ],
+              "text": "replaceAlias(/^Number\\ of\\ SQL\\ transactions\\/s\\ for\\ DB\\ (.*)$/, $1 · транзакции/с)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "type": "timeseries",
+      "title": "Длительность · по базам",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 23,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Average\\ query\\ duration\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Average\\ query\\ duration\\ for\\ DB\\ (.*)$/",
+                "$1 · запрос"
+              ],
+              "text": "replaceAlias(/^Average\\ query\\ duration\\ for\\ DB\\ (.*)$/, $1 · запрос)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Average\\ transaction\\ duration\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Average\\ transaction\\ duration\\ for\\ DB\\ (.*)$/",
+                "$1 · транзакция"
+              ],
+              "text": "replaceAlias(/^Average\\ transaction\\ duration\\ for\\ DB\\ (.*)$/, $1 · транзакция)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Average\\ wait\\ time\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Average\\ wait\\ time\\ for\\ DB\\ (.*)$/",
+                "$1 · ожидание"
+              ],
+              "text": "replaceAlias(/^Average\\ wait\\ time\\ for\\ DB\\ (.*)$/, $1 · ожидание)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": "timeseries",
+      "title": "Трафик · по базам",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Received\\ data\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Received\\ data\\ for\\ DB\\ (.*)$/",
+                "$1 · от клиентов"
+              ],
+              "text": "replaceAlias(/^Received\\ data\\ for\\ DB\\ (.*)$/, $1 · от клиентов)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Sent\\ data\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Sent\\ data\\ for\\ DB\\ (.*)$/",
+                "$1 · клиентам"
+              ],
+              "text": "replaceAlias(/^Sent\\ data\\ for\\ DB\\ (.*)$/, $1 · клиентам)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "type": "timeseries",
+      "title": "Размер пула · по базам",
+      "description": "Настроенный размер серверного пула; не является лимитом клиентских подключений.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 31,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Pool\\ size\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Pool\\ size\\ for\\ DB\\ (.*)$/",
+                "$1 · pool_size"
+              ],
+              "text": "replaceAlias(/^Pool\\ size\\ for\\ DB\\ (.*)$/, $1 · pool_size)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 18,
+      "type": "timeseries",
+      "title": "Подключения PostgreSQL · по базам",
+      "description": "Лимит 0 означает отсутствие ограничения. Процент заполнения при таком лимите не вычисляется.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*лимит$"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    6,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "Без лимита"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Current\\ connections\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Current\\ connections\\ for\\ DB\\ (.*)$/",
+                "$1 · текущие"
+              ],
+              "text": "replaceAlias(/^Current\\ connections\\ for\\ DB\\ (.*)$/, $1 · текущие)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Maximum\\ connections\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Maximum\\ connections\\ for\\ DB\\ (.*)$/",
+                "$1 · лимит"
+              ],
+              "text": "replaceAlias(/^Maximum\\ connections\\ for\\ DB\\ (.*)$/, $1 · лимит)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "type": "timeseries",
+      "title": "Клиентские подключения · по базам",
+      "description": "Лимит 0 означает отсутствие ограничения. Процент заполнения при таком лимите не вычисляется.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 39,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*лимит$"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    6,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "Без лимита"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Current\\ client\\ connections\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Current\\ client\\ connections\\ for\\ DB\\ (.*)$/",
+                "$1 · текущие"
+              ],
+              "text": "replaceAlias(/^Current\\ client\\ connections\\ for\\ DB\\ (.*)$/, $1 · текущие)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Maximum\\ client\\ connections\\ for\\ DB\\ ${database:regex}$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^Maximum\\ client\\ connections\\ for\\ DB\\ (.*)$/",
+                "$1 · лимит"
+              ],
+              "text": "replaceAlias(/^Maximum\\ client\\ connections\\ for\\ DB\\ (.*)$/, $1 · лимит)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "row",
+      "id": 20,
+      "title": "Пулы · фильтры «База» и «Пул»",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 47,
+        "w": 24,
+        "h": 1
+      }
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Соединения клиентов · пулы",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 48,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ client\\ ${pool:regex}:\\ active\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ client\\ (.*):\\ active\\ connections$/",
+                "$1 · активные"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ client\\ (.*):\\ active\\ connections$/, $1 · активные)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ client\\ ${pool:regex}:\\ active\\ waiting$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ client\\ (.*):\\ active\\ waiting$/",
+                "$1 · ожидают"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ client\\ (.*):\\ active\\ waiting$/, $1 · ожидают)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "type": "timeseries",
+      "title": "Соединения серверов · пулы",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 48,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ server\\ ${pool:regex}:\\ active\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ server\\ (.*):\\ active\\ connections$/",
+                "$1 · активные"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ server\\ (.*):\\ active\\ connections$/, $1 · активные)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ server\\ ${pool:regex}:\\ unused\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ server\\ (.*):\\ unused\\ connections$/",
+                "$1 · свободные"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ server\\ (.*):\\ unused\\ connections$/, $1 · свободные)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ server\\ ${pool:regex}:\\ used\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ server\\ (.*):\\ used\\ connections$/",
+                "$1 · использованные"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ server\\ (.*):\\ used\\ connections$/, $1 · использованные)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ server\\ ${pool:regex}:\\ tested\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ server\\ (.*):\\ tested\\ connections$/",
+                "$1 · проверка"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ server\\ (.*):\\ tested\\ connections$/, $1 · проверка)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ server\\ ${pool:regex}:\\ logging\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ server\\ (.*):\\ logging\\ connections$/",
+                "$1 · подключение"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ server\\ (.*):\\ logging\\ connections$/, $1 · подключение)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "type": "timeseries",
+      "title": "Максимальное ожидание · пулы",
+      "description": "Ожидание самого старого клиента в очереди. Обе компоненты уже в секундах; общий client.maxwait в Zabbix обновляется раз в минуту.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 56,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ ${pool:regex}:\\ client\\ maxwait$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ (.*):\\ client\\ maxwait$/",
+                "$1 · всего"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ (.*):\\ client\\ maxwait$/, $1 · всего)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ client\\ ${pool:regex}:\\ maxwait$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ client\\ (.*):\\ maxwait$/",
+                "$1 · целая часть"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ client\\ (.*):\\ maxwait$/, $1 · целая часть)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ client\\ ${pool:regex}:\\ maxwait\\ micro\\ seconds$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ client\\ (.*):\\ maxwait\\ micro\\ seconds$/",
+                "$1 · дробная часть"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ client\\ (.*):\\ maxwait\\ micro\\ seconds$/, $1 · дробная часть)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "type": "stat",
+      "title": "Режим пула",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 56,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "Нет данных",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "2",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": "/^Application: PgBouncer: ${database:regex}$/"
+          },
+          "item": {
+            "filter": "/^PgBouncer\\ client\\ ${pool:regex}:\\ pool\\ mode$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "replaceAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ]
+              },
+              "params": [
+                "/^PgBouncer\\ client\\ (.*):\\ pool\\ mode$/",
+                "$1 · режим"
+              ],
+              "text": "replaceAlias(/^PgBouncer\\ client\\ (.*):\\ pool\\ mode$/, $1 · режим)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^(?!Time$).+/",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "row",
+      "id": 25,
+      "title": "Внутренние соединения · весь экземпляр",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 64,
+        "w": 24,
+        "h": 1
+      }
+    },
+    {
+      "id": 26,
+      "type": "timeseries",
+      "title": "Клиенты · внутренние списки",
+      "description": "",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 65,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ used\\ client\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Используются"
+              ],
+              "text": "setAlias(Используются)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ free\\ client\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Свободные структуры"
+              ],
+              "text": "setAlias(Свободные структуры)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ login\\ client\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Вход"
+              ],
+              "text": "setAlias(Вход)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "type": "timeseries",
+      "title": "Серверы · внутренние списки",
+      "description": "free_clients/free_servers — свободные внутренние структуры памяти PgBouncer, а не лимит доступных подключений.",
+      "pluginVersion": "10.4.19",
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 65,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "noValue": "Нет данных",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": false,
+            "insertNulls": 90000,
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ used\\ server\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Используются"
+              ],
+              "text": "setAlias(Используются)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX}"
+          },
+          "schema": 12,
+          "queryType": "0",
+          "group": {
+            "filter": "$group"
+          },
+          "host": {
+            "filter": "$host"
+          },
+          "application": {
+            "filter": ""
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "item": {
+            "filter": "/^Total\\ free\\ server\\ connections$/"
+          },
+          "functions": [
+            {
+              "def": {
+                "name": "setAlias",
+                "category": "Alias",
+                "params": [
+                  {
+                    "name": "alias",
+                    "type": "string"
+                  }
+                ],
+                "defaultParams": []
+              },
+              "params": [
+                "Свободные структуры"
+              ],
+              "text": "setAlias(Свободные структуры)"
+            }
+          ],
+          "mode": 0,
+          "resultFormat": "time_series",
+          "textFilter": "",
+          "useCaptureGroups": false,
+          "evaltype": "0",
+          "options": {
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "disableDataAlignment": true,
+            "useZabbixValueMapping": false,
+            "useTrends": "default",
+            "count": false
+          },
+          "table": {
+            "skipEmptyValues": false
+          },
+          "trigger": {
+            "filter": ""
+          },
+          "tags": {
+            "filter": ""
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "countTriggersBy": ""
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    }
+  ],
+  "links": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.4.19"
+    },
+    {
+      "type": "datasource",
+      "id": "alexanderzobnin-zabbix-datasource",
+      "name": "Zabbix",
+      "version": "4.6.1"
+    }
+  ]
+}
